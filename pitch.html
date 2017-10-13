@@ -106,6 +106,66 @@
 
 <p>The same app also enables us to show the rate of convergence to the bell shape curve of the histogram of the sample means as we increase the sample size.</p>
 
+</article></slide><slide class=''><hgroup><h2>Portion of code for <code>server.R</code></h2></hgroup><article  id="portion-of-code-for-server.r" class="smaller ">
+
+<pre class = 'prettyprint lang-r'># This is the server logic for a Shiny web application.
+
+library(shiny)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+shinyServer(function(input, output) {
+  output$distPlot &lt;- renderPlot({
+    
+    # capture inputs
+    nobs &lt;- input$nobs
+    sampsize &lt;- input$sampsize
+    disttype &lt;- input$dist
+    dist &lt;- switch(disttype,
+                   Normal = rnorm,
+                   Uniform = runif,
+                   Lognormal = rlnorm,
+                   Exponential = rexp,
+                   rnorm)
+    
+    set.seed(nobs)
+    # generate nobs random numbers from the chosen distribution
+    rnos &lt;- dist(nobs)
+    
+    # create vector of sample means from the nobs random numbers
+    sampleMeans &lt;- c(rep(0, times=nobs))
+    for (i in 1:nobs){
+      sampleMeans[i] &lt;- mean(sample(rnos, sampsize), replace = TRUE)
+    }
+    
+    # create panel for two side-by-side plots
+    # of the nobs observations from the distribution
+    # and the nobs sample means of sampsize size
+    
+    df &lt;- data.frame(
+      rnos ,
+      sampleMeans) 
+
+    df %&gt;%
+      gather(samp, value, rnos:sampleMeans) %&gt;%
+      mutate(
+        samp = factor(samp, 
+                      labels = c(
+                        paste(nobs, &quot;Random Numbers from\n&quot;, disttype, &quot;Distribution&quot;), 
+                        paste(nobs, &quot;Sample Means of Sample Size&quot;, sampsize, &quot;\nfrom&quot;, disttype, &quot;Distribution&quot;)))) %&gt;%
+      ggplot(aes(value, color = samp)) + 
+      geom_histogram(fill = &quot;white&quot;, bins = min(30, nobs / sampsize)) + 
+      facet_wrap(~samp, scale = &quot;free&quot;) +
+      theme_bw() + 
+      xlab(&quot;&quot;) + 
+      ylab(&quot;&quot;) + 
+      theme(legend.title=element_blank())
+      ##dist size, parameter from slider
+  })
+}
+)</pre>
+
 </article></slide><slide class=''><hgroup><h2>The app interface</h2></hgroup><article  id="the-app-interface" class="smaller ">
 
 <p>The figure below shows the interface of the app.</p>
@@ -116,14 +176,7 @@
 
 <p>The app is available in this link: <a href='https://jtabadero.shinyapps.io/coursera_developing_data_products_final/' title=''>https://jtabadero.shinyapps.io/coursera_developing_data_products_final/</a></p>
 
-<p>If you want to improve the app, you can head on to the github repository: <a href='https://github.com/josephuses/coursera_developing_data_products_final' title=''>https://github.com/josephuses/coursera_developing_data_products_final</a></p>
-
-</article></slide><slide class=''><hgroup><h2>Some links on Central Limit Theorem</h2></hgroup><article  id="some-links-on-central-limit-theorem" class="smaller ">
-
-<ul>
-<li><a href='http://mathworld.wolfram.com/CentralLimitTheorem.html' title=''>http://mathworld.wolfram.com/CentralLimitTheorem.html</a></li>
-<li><a href='http://www.statisticshowto.com/central-limit-theorem-examples/' title=''>http://www.statisticshowto.com/central-limit-theorem-examples/</a></li>
-</ul></article></slide>
+<p>If you want to improve the app, you can head on to the github repository: <a href='https://github.com/josephuses/coursera_developing_data_products_final' title=''>https://github.com/josephuses/coursera_developing_data_products_final</a></p></article></slide>
 
 
   <slide class="backdrop"></slide>
