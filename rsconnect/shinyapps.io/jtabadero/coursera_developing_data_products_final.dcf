@@ -1,0 +1,12 @@
+name: coursera_developing_data_products_final
+title: coursera_developing_data_products_final
+username:
+account: jtabadero
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 224740
+bundleId: 1024410
+url: https://jtabadero.shinyapps.io/coursera_developing_data_products_final/
+when: 1507863045.96734
+asMultiple: FALSE
+asStatic: FALSE
